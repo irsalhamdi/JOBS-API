@@ -21,10 +21,23 @@ const schema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide password'],
         minlength: 6,
+    },
+    lastname: {
+        type: String,
+        trim: true,
+        maxlength: 20,
+        default: 'lastname'
+    },
+    location: {
+        type: String,
+        trim: true,
+        maxlength: 20,
+        default: 'my city'
     }
 });
 
 schema.pre('save', async function() {
+    if(!this.isModified('password')) return;
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 });

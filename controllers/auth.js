@@ -1,7 +1,6 @@
 const User = require('../models/User');
 const {StatusCodes} = require('http-status-codes');
 const {BadRequestError, UnauthenticatedError} = require('../errors');
-const jwt = require('jsonwebtoken');
 
 module.exports = {
     register: async(req, res) => {
@@ -9,7 +8,7 @@ module.exports = {
 
         const token = user.createJWT();
 
-        res.status(StatusCodes.CREATED).json({user:{name: user.name}, token});
+        res.status(StatusCodes.CREATED).json({user:{email: user.email, lastname: user.lastname, location: user.location, name: user.name, token}});
     },
     login: async(req, res) => {
         const {email, password} = req.body;
@@ -31,6 +30,25 @@ module.exports = {
         }
 
         const token = user.createJWT();
-        res.status(StatusCodes.OK).json({user: {name: user.name}, token});
+        res.status(StatusCodes.OK).json({user:{email: user.email, lastname: user.lastname, location: user.location, name: user.name, token}});
+    },
+    updateUser: async(req, res) => {
+        const {name, email, lastname, location} = req.body;
+        
+        if(!name || !email || !lastname || !location){
+            throw new BadRequestError(`Please provide all values`);
+        }
+
+        const user = await User.findOne({_id: req.user.userId});
+
+        user.name = name;
+        user.email = email;
+        user.lastname = lastname;
+        user.location = location;
+
+        await user.save();
+
+        const token = user.createJWT();
+        res.status(StatusCodes.OK).json({user: {name: user.name, email: user.email, lastname: user.lastname, location: user.location, token}});
     }
 }
