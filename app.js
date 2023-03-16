@@ -12,6 +12,7 @@ const authenticateUser = require('./middleware/authentication');
 const authRouter = require('./routes/auth');
 const jobsRouter = require('./routes/jobs');
 
+app.set('trust proxy', 1);
 app.use(express.static(path.resolve(__dirname, './client/build')));
 app.use(express.json());
 app.use(helmet());

@@ -34,7 +34,7 @@ module.exports = {
     },
     updateUser: async(req, res) => {
         const {name, email, lastname, location} = req.body;
-        
+        console.log(req.user);
         if(!name || !email || !lastname || !location){
             throw new BadRequestError(`Please provide all values`);
         }
